@@ -26,10 +26,14 @@ def main():
     parser.add_argument('--weight-decay', type=float, default=0.0)
     parser.add_argument('--validation-interval', type=int, default=3,
                         help='Number of updates before running validation')
+    parser.add_argument('--validation-ratio', type=float, default=0.1)
+    parser.add_argument('--early-stopping', action='store_true',
+                        help='Enable early stopping.')
     args = parser.parse_args()
 
     print("Loading data")
-    adj, labels, idx_train, idx_val, idx_test = load_20newsgroups()
+    adj, labels, idx_train, idx_val, idx_test = load_20newsgroups(
+        validation_ratio=args.validation_ratio)
 
     train_iter = chainer.iterators.SerialIterator(
         idx_train, batch_size=len(idx_train), shuffle=False)
@@ -52,7 +56,7 @@ def main():
             chainer.optimizer_hooks.WeightDecay(args.weight_decay))
 
     if args.model != None:
-        print( "loading model from " + args.model)
+        print("Loading model from " + args.model)
         chainer.serializers.load_npz(args.model, model)
 
     updater = training.StandardUpdater(train_iter, optimizer, device=args.gpu)
@@ -69,18 +73,24 @@ def main():
         ['epoch', 'main/loss', 'validation/main/loss',
          'main/accuracy', 'validation/main/accuracy', 'elapsed_time']))
 
-    # Take a best snapshot
-    record_trigger = training.triggers.MaxValueTrigger(
-        'validation/main/accuracy', (args.validation_interval, 'epoch'))
-    trainer.extend(
-        extensions.snapshot_object(model, 'best_model.npz'),
-        trigger=record_trigger)
+    if args.early_stopping:
+        # Take a best snapshot
+        record_trigger = training.triggers.MaxValueTrigger(
+            'validation/main/loss', (args.validation_interval, 'epoch'))
+        trainer.extend(
+            extensions.snapshot_object(model, 'best_model.npz'),
+            trigger=record_trigger)
 
     trainer.run()
 
-    chainer.serializers.load_npz(
-        os.path.join(args.out, 'best_model.npz'), model)
+    if args.early_stopping:
+        chainer.serializers.load_npz(
+            os.path.join(args.out, 'best_model.npz'), model)
+    else:
+        chainer.serializers.save_npz(
+            os.path.join(args.out, 'best_model.npz'), model)
 
+    print('Running test...')
     with chainer.using_config('train', False), chainer.no_backprop_mode():
         _, accuracy = model.evaluate(idx_test)
     print('Test accuracy = %f' % accuracy)

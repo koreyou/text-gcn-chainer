@@ -59,7 +59,7 @@ def tokenize(text):
     return text.strip().split()
 
 
-def load_20newsgroups():
+def load_20newsgroups(validation_ratio):
     """Load text network (20 news group)
 
     Returns:
@@ -75,7 +75,7 @@ def load_20newsgroups():
     adj = create_text_adjacency_matrix(
         [tokenize(t) for t in (train['data'] + test['data'])])
 
-    n_train = int(len(train['data']) * 0.8)
+    n_train = int(len(train['data']) * (1.0 - validation_ratio))
     n_all = len(train['data']) + len(test['data'])
     idx_train = np.array(list(range(n_train)), np.int32)
     idx_val = np.array(list(range(n_train, len(train['data']))), np.int32)
