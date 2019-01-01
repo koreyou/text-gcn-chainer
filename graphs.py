@@ -50,8 +50,6 @@ def create_text_adjacency_matrix(texts):
     # so apply it
     adj = adj.tocoo()
 
-    adj = normalize(adj)
-
     return adj
 
 
@@ -59,8 +57,12 @@ def tokenize(text):
     return text.strip().split()
 
 
-def load_20newsgroups(validation_ratio):
+def load_20newsgroups(validation_ratio, normalization):
     """Load text network (20 news group)
+
+    Arguments:
+        validation_ratio (float): Ratio of validation split
+        normalization (str): Variant of normalization method to use.
 
     Returns:
         adj (chainer.utils.sparse.CooMatrix): (Node, Node) shape
@@ -74,7 +76,10 @@ def load_20newsgroups(validation_ratio):
     test = fetch_20newsgroups(subset='test')
     adj = create_text_adjacency_matrix(
         [tokenize(t) for t in (train['data'] + test['data'])])
-
+    if normalization == 'gcn':
+        adj = normalize(adj)
+    else:
+        adj = normalize_pygcn(adj)
     n_train = int(len(train['data']) * (1.0 - validation_ratio))
     n_all = len(train['data']) + len(test['data'])
     idx_train = np.array(list(range(n_train)), np.int32)
@@ -89,8 +94,10 @@ def load_20newsgroups(validation_ratio):
     return adj, labels, idx_train, idx_val, idx_test
 
 
-def normalize(a):
-    """ normalize adjacency matrix with normalization-trick.
+def normalize_pygcn(a):
+    """ normalize adjacency matrix with normalization-trick. This variant
+    is proposed in https://github.com/tkipf/pygcn .
+    Refer https://github.com/tkipf/pygcn/issues/11 for the author's comment.
 
     Arguments:
         a (scipy.sparse.coo_matrix): Unnormalied adjacency matrix
@@ -104,9 +111,26 @@ def normalize(a):
     rowsum_inv[np.isinf(rowsum_inv)] = 0.
     # ~D in the GCN paper
     d_tilde = sp.diags(rowsum_inv)
-    # FIXME: multiply d_tilde from right as well?
-    mx = d_tilde.dot(a)
-    return mx
+    return d_tilde.dot(a)
+
+
+def normalize(adj):
+    """ normalize adjacency matrix with normalization-trick that is faithful to
+    the original paper.
+
+    Arguments:
+        a (scipy.sparse.coo_matrix): Unnormalied adjacency matrix
+
+    Returns:
+        scipy.sparse.coo_matrix: Normalized adjacency matrix
+    """
+    adj += sp.eye(adj.shape[0])
+    rowsum = np.array(adj.sum(1))
+    d_inv_sqrt = np.power(rowsum, -0.5).flatten()
+    d_inv_sqrt[np.isinf(d_inv_sqrt)] = 0.
+    # ~D in the GCN paper
+    d_mat_inv_sqrt = sp.diags(d_inv_sqrt)
+    return d_mat_inv_sqrt.dot(adj).dot(d_mat_inv_sqrt)
 
 
 def to_chainer_sparse_variable(mat):

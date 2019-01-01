@@ -29,11 +29,14 @@ def main():
     parser.add_argument('--validation-ratio', type=float, default=0.1)
     parser.add_argument('--early-stopping', action='store_true',
                         help='Enable early stopping.')
+    parser.add_argument('--normalization', default='pygcn',
+                        choices=['pygcn', 'gcn'],
+                        help='Variant of adjacency matrix normalization method to use')
     args = parser.parse_args()
 
     print("Loading data")
     adj, labels, idx_train, idx_val, idx_test = load_20newsgroups(
-        validation_ratio=args.validation_ratio)
+        validation_ratio=args.validation_ratio, normalization=args.normalization)
 
     train_iter = chainer.iterators.SerialIterator(
         idx_train, batch_size=len(idx_train), shuffle=False)
