@@ -64,7 +64,7 @@ def main():
 
     updater = training.StandardUpdater(train_iter, optimizer, device=args.gpu)
     trigger = training.triggers.EarlyStoppingTrigger(
-        monitor='validation/main/accuracy', patients=4,
+        monitor='validation/main/loss', patients=12,
         check_trigger=(args.validation_interval, 'epoch'),
         max_trigger=(args.epoch, 'epoch'))
     trainer = training.Trainer(updater, trigger, out=args.out)
