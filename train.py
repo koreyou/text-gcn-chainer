@@ -12,8 +12,7 @@ from graphs import load_20newsgroups
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--model', '-m', type=str, default=None)
-    parser.add_argument('--lr', type=float, default=2e-4,
-                        help='Learning rate')
+    parser.add_argument('--lr', type=float, default=0.02, help='Learning rate')
     parser.add_argument('--epoch', '-e', type=int, default=200,
                         help='Number of sweeps over the dataset to train')
     parser.add_argument('--gpu', '-g', type=int, default=-1,
