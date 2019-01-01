@@ -24,6 +24,8 @@ def main():
     parser.add_argument('--dropout', '-d', type=float, default=0.5,
                         help='Dropout rate')
     parser.add_argument('--weight-decay', type=float, default=0.0)
+    parser.add_argument('--validation-interval', type=int, default=3,
+                        help='Number of updates before running validation')
     args = parser.parse_args()
 
     print("Loading data")
@@ -54,9 +56,14 @@ def main():
         chainer.serializers.load_npz(args.model, model)
 
     updater = training.StandardUpdater(train_iter, optimizer, device=args.gpu)
-    trainer = training.Trainer(updater, (args.epoch, 'epoch'), out=args.out)
+    trigger = training.triggers.EarlyStoppingTrigger(
+        monitor='validation/main/accuracy', patients=4,
+        check_trigger=(args.validation_interval, 'epoch'),
+        max_trigger=(args.epoch, 'epoch'))
+    trainer = training.Trainer(updater, trigger, out=args.out)
 
-    trainer.extend(extensions.Evaluator(dev_iter, model, device=args.gpu))
+    trainer.extend(extensions.Evaluator(dev_iter, model, device=args.gpu),
+                   trigger=(args.validation_interval, 'epoch'))
     trainer.extend(extensions.LogReport())
     trainer.extend(extensions.PrintReport(
         ['epoch', 'main/loss', 'validation/main/loss',
@@ -64,7 +71,7 @@ def main():
 
     # Take a best snapshot
     record_trigger = training.triggers.MaxValueTrigger(
-        'validation/main/accuracy', (1, 'epoch'))
+        'validation/main/accuracy', (args.validation_interval, 'epoch'))
     trainer.extend(
         extensions.snapshot_object(model, 'best_model.npz'),
         trigger=record_trigger)
