@@ -1,0 +1,35 @@
+###### Editor debris ########
+
+*.org
+*~
+¥#*
+
+# spyder
+.spyderproject/
+
+# pycharm
+**/.idea/
+
+###### Python debris ########
+
+*.pyc
+
+
+###### Impl. specific debris ########
+
+*.log
+
+# tensorflow
+*events.out.tfevents*
+
+# waf/maf
+.waf*
+.lock*
+**/build/
+wscript*.py
+
+###### Work routines debris ########
+
+work
+result/
+.python-version
