@@ -1,10 +1,10 @@
 # Text GCN on Chainer
 
 This project implements [Yao et al. 2018. Graph Convolutional Networks for Text Classification. ArXiv.](https://arxiv.org/abs/1809.05679) in [Chainer](https://chainer.org/).
-The project includes code to reproduce text classification experiment on 20 news groups dataset. **This is NOT an official implementation by the authors.**
+The project includes codes to reproduce the text classification experiment on the 20 news groups dataset. **This is NOT an official implementation by the authors.**
 
-This project adopted hyperparamters specified in the original paper.
-I have greatly simplified text preprocessing to just splitting words with white space.
+This project adopts hyperparamters specified in the original paper.
+I have greatly simplified text preprocessing to just splitting words with white spaces.
 
 I referenced [@takyamamoto's implementation of GCN](https://github.com/takyamamoto/Graph-Convolution-Chainer) to implement this project.
 
@@ -28,8 +28,8 @@ Run:
 python train.py
 ```
 
-Refer to `python train.py -h` for options.
-Note that you can enable early stopping by `--early-stopping` flag, but overhead for saving intermediate is quite large.
+Refer to `python train.py -h` for the options.
+Note that you can enable early stopping by `--early-stopping` flag, but the overhead for saving intermediate models is quite large.
 
 
 # Reproducing the paper
