@@ -34,7 +34,7 @@ def create_text_adjacency_matrix(texts):
             normalized adjency matrix.
     """
     transformer = sklearn.feature_extraction.text.TfidfVectorizer(
-        max_df=1.0, ngram_range=(1, 1), min_df=1, analyzer=lambda x: x)
+        max_df=1.0, ngram_range=(1, 1), min_df=5, analyzer=lambda x: x)
     freq_doc = transformer.fit_transform(texts)
 
     freq_window = transformer.transform(
