@@ -1,3 +1,4 @@
 chainer==5.0.0
 scikit-learn
 scipy==1.2.0
+nltk==3.4

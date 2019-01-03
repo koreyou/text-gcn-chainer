@@ -4,6 +4,8 @@ import scipy.sparse as sp
 import sklearn
 from sklearn.datasets import fetch_20newsgroups
 
+from nlp_utils import tokenize
+
 
 def moving_window_window_iterator(sentences, window):
     for sentence in sentences:
@@ -51,10 +53,6 @@ def create_text_adjacency_matrix(texts):
     adj = adj.tocoo()
 
     return adj
-
-
-def tokenize(text):
-    return text.strip().split()
 
 
 def load_20newsgroups(validation_ratio, normalization):
