@@ -95,7 +95,7 @@ class TextGCN(chainer.Chain):
 
 
 class GraphConvolution(chainer.Link):
-    def __init__(self, in_size, out_size=None, nobias=False, initialW=None,
+    def __init__(self, in_size, out_size=None, nobias=True, initialW=None,
                  initial_bias=None):
         super(GraphConvolution, self).__init__()
 
@@ -105,7 +105,7 @@ class GraphConvolution(chainer.Link):
 
         with self.init_scope():
             if initialW is None:
-                initialW = initializers.HeUniform()
+                initialW = initializers.GlorotUniform()
             self.W = chainer.Parameter(initialW, (in_size, out_size))
             if nobias:
                 self.b = None
