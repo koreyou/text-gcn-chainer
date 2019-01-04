@@ -123,7 +123,8 @@ def normalize(adj):
     Returns:
         scipy.sparse.coo_matrix: Normalized adjacency matrix
     """
-    adj += sp.eye(adj.shape[0])
+    # no need to add identity matrix because self connection has already been added
+    # a += sp.eye(a.shape[0])
     rowsum = np.array(adj.sum(1))
     d_inv_sqrt = np.power(rowsum, -0.5).flatten()
     d_inv_sqrt[np.isinf(d_inv_sqrt)] = 0.
