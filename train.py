@@ -78,7 +78,7 @@ def main():
 
     if args.early_stopping:
         # Take a best snapshot
-        record_trigger = training.triggers.MaxValueTrigger(
+        record_trigger = training.triggers.MinValueTrigger(
             'validation/main/loss', (args.validation_interval, 'epoch'))
         trainer.extend(
             extensions.snapshot_object(model, 'best_model.npz'),
