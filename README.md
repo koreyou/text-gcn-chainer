@@ -34,8 +34,8 @@ Note that you can enable early stopping by `--early-stopping` flag, but the over
 
 # Reproducing the paper
 
-Running this project with the original adjacency matrix normalization method (`python train.py -g 0 --normalization gcn`) yields 0.8533 accuracy in the 20 News groups dataset.
+Running this project with the original adjacency matrix normalization method (`python train.py -g 0 --normalization gcn`) yields 0.8578 accuracy in the 20 News groups dataset.
 The test accuracy was 0.8634 in the original paper.
 I was not able to figure out the reason for slightly inferior performance.
 
-Running `python train.py -g 0 --normalization pygcn` which uses normalization method proposed in [GCN authors' PyTorch implementation](https://github.com/tkipf/pygcn/issues/11) yields much better result of 0.8690 (comparable with the original paper).
+Running `python train.py -g 0 --normalization pygcn` which uses normalization method proposed in [GCN authors' PyTorch implementation](https://github.com/tkipf/pygcn/issues/11) yields much better result of 0.8660 (comparable with the original paper).

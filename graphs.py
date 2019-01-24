@@ -38,7 +38,10 @@ def create_text_adjacency_matrix(texts):
     # The authors removed words occuring less than 5 times. It is not directory
     # applicable to min_df, so I set bit smaller value
     transformer = sklearn.feature_extraction.text.TfidfVectorizer(
-        max_df=1.0, ngram_range=(1, 1), min_df=3, analyzer=lambda x: x)
+        max_df=1.0, ngram_range=(1, 1), min_df=3, analyzer='word',
+        preprocessor=lambda x: x, tokenizer=lambda x: x,
+        norm=None, smooth_idf=False
+    )
     freq_doc = transformer.fit_transform(texts)
 
     freq_window = transformer.transform(
