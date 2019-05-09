@@ -33,8 +33,6 @@ class TextGCN(chainer.Chain):
         with self.init_scope():
             self.gconv1 = GraphConvolution(adj.shape[1], feat_size)
             self.gconv2 = GraphConvolution(feat_size, n_class)
-            self.input_repr = chainer.Parameter(
-                initializer, (adj.shape[0], feat_size))
         # This Variable will not be updated because require_grad=False
         self.input = to_chainer_sparse_variable(
             sp.identity(adj.shape[1]))
